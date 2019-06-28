@@ -6,7 +6,6 @@
 // Debug and trace levels can be filtered based on lgr.Trace and lgr.Debug options.
 // ERROR, FATAL and PANIC levels send to err as well. FATAL terminate caller application with os.Exit(1)
 // and PANIC also prints stack trace.
-
 package lgr
 
 import (
@@ -21,6 +20,8 @@ import (
 	"sync"
 	"text/template"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 var levels = []string{"TRACE", "DEBUG", "INFO", "WARN", "ERROR", "PANIC", "FATAL"}
@@ -55,6 +56,8 @@ type Logger struct {
 	callerOn      bool
 	levelBracesOn bool
 	templ         *template.Template
+
+	Color color.Color
 }
 
 // can be redefined internally for testing
@@ -165,7 +168,13 @@ func (l *Logger) logf(format string, args ...interface{}) {
 	}
 
 	l.lock.Lock()
-	_, _ = l.stdout.Write(data)
+
+	if bytes.Contains(data, []byte("WARN")) {
+		c := color.New(color.FgRed)
+		c.Print(string(data))
+	} else {
+		_, _ = l.stdout.Write(data)
+	}
 
 	// write to err as well for high levels, exit(1) on fatal and panic and dump stack on panic level
 	switch lv {

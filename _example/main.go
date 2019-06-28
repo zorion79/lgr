@@ -31,6 +31,8 @@ func main() {
 	lgr.Setup(lgr.Msec, lgr.LevelBraces) // change settings of global logger
 	logWithGlobal()                      // logging with modified global logger
 	// out: 2019/04/01 02:43:20.591 [WARN]  test 9876543
+
+	logConsumer(l3)
 }
 
 // consumer example with Logger passed in
