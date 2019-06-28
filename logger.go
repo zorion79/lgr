@@ -171,7 +171,9 @@ func (l *Logger) logf(format string, args ...interface{}) {
 
 	if bytes.Contains(data, []byte("WARN")) {
 		c := color.New(color.FgRed)
-		c.Print(string(data))
+		c.Set()
+		_, _ = l.stdout.Write(data)
+		color.Unset()
 	} else {
 		_, _ = l.stdout.Write(data)
 	}
