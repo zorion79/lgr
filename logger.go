@@ -56,8 +56,6 @@ type Logger struct {
 	callerOn      bool
 	levelBracesOn bool
 	templ         *template.Template
-
-	Color color.Color
 }
 
 // can be redefined internally for testing
@@ -169,14 +167,7 @@ func (l *Logger) logf(format string, args ...interface{}) {
 
 	l.lock.Lock()
 
-	if bytes.Contains(data, []byte("WARN")) {
-		c := color.New(color.FgRed)
-		c.Set()
-		_, _ = l.stdout.Write(data)
-		color.Unset()
-	} else {
-		_, _ = l.stdout.Write(data)
-	}
+	l.writeToStdout(data)
 
 	// write to err as well for high levels, exit(1) on fatal and panic and dump stack on panic level
 	switch lv {
@@ -198,6 +189,17 @@ func (l *Logger) logf(format string, args ...interface{}) {
 	}
 
 	l.lock.Unlock()
+}
+
+func (l *Logger) writeToStdout(data []byte) {
+	if bytes.Contains(data, []byte("WARN")) {
+		c := color.New(color.FgRed)
+		c.Set()
+		_, _ = l.stdout.Write(data)
+		color.Unset()
+	} else {
+		_, _ = l.stdout.Write(data)
+	}
 }
 
 type callerInfo struct {
