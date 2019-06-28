@@ -1,6 +1,6 @@
 package main
 
-import "github.com/go-pkgz/lgr"
+import "github.com/zorion79/lgr"
 
 // Logger defines application's logger interface. Note - it doesn't introduce any dependency on lgr
 // and can be replaced with anything providing Logf function
